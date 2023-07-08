@@ -1,60 +1,62 @@
 ﻿using System.Reflection;
 using ConsoleTools;
 using MongoDB.Bson.Serialization.Attributes;
-using ProtoProxima.Models;
+using ProtoProxima.Core.Services;
+using ProtoProxima.MongoDB.Models;
 
 namespace ProtoProxima.ConsoleUI.ModeledMenus;
 
-public class ModeledMenu<T> : CustomMenu
+public abstract class ModeledMenu<T> : CustomMenu
 {
-    public T Element;
+    protected T Element;
+    protected readonly ICore<T> Core;
     private readonly List<PropertyInfo> _props;
 
-    protected struct CustomItem
-    {
-        public string Name { get; set; }
-        public Func<ModeledMenu<T>, Action> Action { get; set; }
-        public Action<MenuItem>? ItemConfig { get; set; }
-
-        public CustomItem(string name, Func<ModeledMenu<T>, Action> action, Action<MenuItem>? itemConfig = null)
-        {
-            Name = name;
-            Action = action;
-            ItemConfig = itemConfig;
-        }
-    }
-
     protected ModeledMenu(
+        ICore<T> core,
         T? element,
-        Func<PropertyInfo, ModeledMenu<T>, Action> propsAction,
-        List<CustomItem> actionItems,
         string[] args,
         int level = 0
     ) : base(args, level)
     {
         Element = element ?? Activator.CreateInstance<T>();
+        Core = core;
         _props = GetProperties();
-        _props.ForEach(prop =>
-            Add($"{prop.Name,-30}{DisplayableValue(prop.GetValue(Element))}", propsAction(prop, this)));
-        //propAction returns in this moment the future action to be executed when the property is selected
+        _props.ForEach(prop => Add(prop.Name, () =>
+        {
+            var propTypeName = prop.PropertyType.Name;
+            if (prop.PropertyType.IsGenericType &&
+                prop.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                propTypeName = prop.PropertyType.GetGenericArguments()[0].Name;
 
-        actionItems.ForEach(item => Add(item.Name, item.Action(this), item.ItemConfig));
-        Add("Back", Close);
+            Console.WriteLine($"Set {prop.Name} ({propTypeName}):");
+            var value = Console.ReadLine();
+            if (string.IsNullOrEmpty(value)) return;
+
+            prop.SetValue(Element, ParseValue(value, prop.PropertyType));
+        }));
+
         Configure(config =>
         {
             config.WriteHeaderAction = Console.WriteLine;
-            config.EnableBreadcrumb = true;
-            config.Selector = "--> ";
             config.WriteItemAction = item =>
             {
-                if (item.Index < _props.Count)
-                    Console.Write("[{0}] {1}", item.Index, item.Name);
-                if (item.Index == _props.Count - 1)
+                var i = item.Index;
+                if (i < _props.Count)
+                    Console.Write("[{0}] {1}{2}", i, item.Name.PadRight(20), DisplayableValue(_props[i].GetValue(Element)));
+                if (i == _props.Count - 1)
                     Console.WriteLine();
-                if (item.Index >= _props.Count)
+                if (i >= _props.Count)
                     Console.Write(item.Name);
             };
         });
+    }
+
+    protected void AddCustomItem(string name, Func<ModeledMenu<T>, Action> getAction,
+        Action<MenuItem>? itemConfig = null)
+    {
+        Add(name, getAction(this));
+        itemConfig?.Invoke(Items[^1]);
     }
 
     private static List<PropertyInfo> GetProperties()
@@ -66,7 +68,7 @@ public class ModeledMenu<T> : CustomMenu
             var attributes = prop.GetCustomAttributes().ToArray();
             if (attributes.Any(a => a is BsonIdAttribute))
                 return false;
-            
+
             return !attributes.Any(a =>
                 a is HiddenAttribute hidden
                 && hidden.MenuClasses.Contains(typeof(ModeledMenu<>))
@@ -83,7 +85,7 @@ public class ModeledMenu<T> : CustomMenu
         if (type == typeof(DateTime))
             return DateTime.TryParse(value, out var dateTime) ? dateTime : DateTime.Now;
         if (type == typeof(Category))
-            return !string.IsNullOrWhiteSpace(value) ? new Category {Name = value} : null;
+            return !string.IsNullOrWhiteSpace(value) ? new Category { Name = value } : null;
         if (type == typeof(bool))
             return value.ToLower() switch
             {
@@ -104,7 +106,7 @@ public class ModeledMenu<T> : CustomMenu
         if (type == typeof(DateTime))
             return ((DateTime)value).ToString("dd/MMM/yyyy HH:mm");
         if (type == typeof(TimeSpan))
-            return IParser.Humanize((TimeSpan) value);
+            return IParser.Humanize((TimeSpan)value);
         if (type == typeof(bool))
             return value is true ? "Yes" : "No";
 

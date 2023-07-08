@@ -7,6 +7,12 @@ public class CustomMenu : ConsoleMenu
 
     public CustomMenu(string[] args, int level = 0) : base(args, level)
     {
+        Configure(config =>
+        {
+            config.Selector = "--> ";
+            config.EnableBreadcrumb = true;
+        });
+
     }
     
     public CustomMenu SetParent(ConsoleMenu menu)
@@ -16,32 +22,32 @@ public class CustomMenu : ConsoleMenu
     }
     
 
-    public CustomMenu Add(string name, Action action, Action<MenuItem>? itemConfig = null)
-    {
-        var menu = (CustomMenu) base.Add(name, action);
-        itemConfig?.Invoke(menu.Items[^1]);
-        return menu;
-    }
-
-    public CustomMenu Add(string name, Func<CancellationToken, Task> action, Action<MenuItem>? itemConfig = null)
-    {
-        var menu = (CustomMenu) base.Add(name, action);
-        itemConfig?.Invoke(menu.Items[^1]);
-        return menu;
-    }
-
-    public CustomMenu Add(string name, Action<ConsoleMenu> action, Action<MenuItem>? itemConfig = null)
-    {
-        var menu = (CustomMenu) base.Add(name, action);
-        itemConfig?.Invoke(menu.Items[^1]);
-        return menu;
-    }
-
-    public CustomMenu Add(string name, Func<ConsoleMenu, CancellationToken, Task> action, Action<MenuItem>? itemConfig = null)
-    {
-        var menu = (CustomMenu) base.Add(name, action);
-        itemConfig?.Invoke(menu.Items[^1]);
-        return menu;
-    }
+    // public CustomMenu Add(string name, Action action, Action<MenuItem>? itemConfig = null)
+    // {
+    //     var menu = (CustomMenu) base.Add(name, action);
+    //     itemConfig?.Invoke(menu.Items[^1]);
+    //     return menu;
+    // }
+    //
+    // public CustomMenu Add(string name, Func<CancellationToken, Task> action, Action<MenuItem>? itemConfig = null)
+    // {
+    //     var menu = (CustomMenu) base.Add(name, action);
+    //     itemConfig?.Invoke(menu.Items[^1]);
+    //     return menu;
+    // }
+    //
+    // public CustomMenu Add(string name, Action<ConsoleMenu> action, Action<MenuItem>? itemConfig = null)
+    // {
+    //     var menu = (CustomMenu) base.Add(name, action);
+    //     itemConfig?.Invoke(menu.Items[^1]);
+    //     return menu;
+    // }
+    //
+    // public CustomMenu Add(string name, Func<ConsoleMenu, CancellationToken, Task> action, Action<MenuItem>? itemConfig = null)
+    // {
+    //     var menu = (CustomMenu) base.Add(name, action);
+    //     itemConfig?.Invoke(menu.Items[^1]);
+    //     return menu;
+    // }
     
 }

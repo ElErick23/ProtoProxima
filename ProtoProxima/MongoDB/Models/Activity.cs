@@ -2,7 +2,7 @@
 using MongoDB.Bson.Serialization.Attributes;
 using ProtoProxima.ConsoleUI.ModeledMenus;
 
-namespace ProtoProxima.Models;
+namespace ProtoProxima.MongoDB.Models;
 
 public class Activity
 {

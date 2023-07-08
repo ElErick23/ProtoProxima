@@ -1,4 +1,4 @@
-﻿namespace ProtoProxima.Models;
+﻿namespace ProtoProxima.MongoDB;
 
 public class MongoDBSettings {
 

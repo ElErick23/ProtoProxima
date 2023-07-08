@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using ProtoProxima.Models;
+using ProtoProxima.MongoDB.Models;
 
-namespace ProtoProxima.Services;
+namespace ProtoProxima.MongoDB.Services;
 
 public class ActivityService : MongoDbService<Activity>
 {

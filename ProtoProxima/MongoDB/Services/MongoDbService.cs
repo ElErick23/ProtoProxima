@@ -1,10 +1,9 @@
 ﻿using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using ProtoProxima.Models;
 
-namespace ProtoProxima.Services;
+namespace ProtoProxima.MongoDB.Services;
 
-public class MongoDbService<T>
+public abstract class MongoDbService<T>
 {
     private readonly IMongoCollection<T> _modelCollection;
 

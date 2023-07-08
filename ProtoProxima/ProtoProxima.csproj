@@ -25,4 +25,8 @@
       <ProjectReference Include="..\ConsoleMenu\ConsoleMenu.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Services\" />
+    </ItemGroup>
+
 </Project>

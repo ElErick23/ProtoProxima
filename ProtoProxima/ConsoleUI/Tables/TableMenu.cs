@@ -1,14 +1,21 @@
 ﻿using MongoDB.Driver;
 using ProtoProxima.ConsoleUI.ModeledMenus;
-using ProtoProxima.Services;
+using ProtoProxima.ConsoleUI.Services;
+using ProtoProxima.Core.Services;
+using ProtoProxima.MongoDB.Services;
 
 namespace ProtoProxima.ConsoleUI.Tables;
 
 public class TableMenu<T> : CustomMenu
 {
-    public TableMenu(MongoDbService<T> service, string[] args, int level = 0) : base(args, level)
+    public TableMenu(
+        ICore<T> core,
+        MenuService menuService,
+        string[] args,
+        int level = 0)
+        : base(args, level)
     {
-        var data = service.GetListAsync(Builders<T>.Filter.Empty).Result;
+        var data = core.GetList(Builders<T>.Filter.Empty).Result;
         var table = new ModeledTable<T>().Populate(data);
         var (header, tableRows, footer) = table.GetTableParts();
 
@@ -18,18 +25,17 @@ public class TableMenu<T> : CustomMenu
             var element = data[i];
             Add(row, () =>
             {
-                EditionMenu<T>.Build(element, service, args, level + 1).SetParent(this).Show();
+                menuService.NewEditionMenu(element, args, level + 1).SetParent(this).Show();
                 CloseMenu();
-                new TableMenu<T>(service, args, level).SetParent(parent!).Show();
+                new TableMenu<T>(core, menuService, args, level).SetParent(parent!).Show();
             });
         }
+
         Add("Back", Close);
 
         Configure(config =>
         {
             config.Title = $"[Select {typeof(T).Name}]";
-            config.Selector = "--> ";
-            config.EnableBreadcrumb = true;
             config.WriteHeaderAction = () =>
             {
                 if (data.Count > 0)
@@ -42,7 +48,7 @@ public class TableMenu<T> : CustomMenu
             };
             config.WriteItemAction = item =>
             {
-                Console.Write(item.Index >= data.Count ? $"{item.Name}" : $"[{item.Index}] {item.Name}");
+                Console.Write(item.Index < data.Count ? $"[{item.Index}] {item.Name}" : $"{item.Name}");
                 if (item.Index != data.Count - 1) return;
 
                 Console.BackgroundColor = ConsoleColor.Black;
@@ -51,6 +57,4 @@ public class TableMenu<T> : CustomMenu
             };
         });
     }
-
-
 }
