@@ -9,7 +9,7 @@ public interface ICore<T>
     
     Task Update(T element);
 
-    Task Delete(T element);
+    Task<bool> Delete(T element);
 
     Task<List<T>> GetList(FilterDefinition<T> filter);
 }

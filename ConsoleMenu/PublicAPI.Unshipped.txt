@@ -1,4 +1,5 @@
 ﻿ConsoleTools.ConsoleMenu
+ConsoleTools.ConsoleMenu.Add(char key, string! name, System.Action<ConsoleTools.ConsoleMenu!>! action, System.ConsoleColor? foregroundColor = null, System.ConsoleColor? backgroundColor = null) -> ConsoleTools.ConsoleMenu!
 ConsoleTools.ConsoleMenu.Add(string! name, System.Action! action) -> ConsoleTools.ConsoleMenu!
 ConsoleTools.ConsoleMenu.Add(string! name, System.Action<ConsoleTools.ConsoleMenu!>! action) -> ConsoleTools.ConsoleMenu!
 ConsoleTools.ConsoleMenu.Add(string! name, System.Func<ConsoleTools.ConsoleMenu!, System.Threading.CancellationToken, System.Threading.Tasks.Task!>! action) -> ConsoleTools.ConsoleMenu!

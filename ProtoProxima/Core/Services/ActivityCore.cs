@@ -26,12 +26,20 @@ public class ActivityCore : ICore<Activity>
         await _activityService.UpdateAsync(element.Id, element);
     }
 
-    public async Task Delete(Activity element)
+    public async Task<bool> Delete(Activity element)
     {
         if (element.Id == null) 
             throw new Exception("Activity has no Id, can't delete.");
         
+        Console.WriteLine("Are you sure? (y/n)");
+        var key = Console.ReadLine()?.ToLower();
+        if (key != "y") return false;
+
+        Console.WriteLine("Deleting...");
         await _activityService.DeleteAsync(element.Id);
+        Console.WriteLine("Deleted! Press any key to continue...");
+        Console.ReadKey();
+        return true;
     }
 
     public async Task<List<Activity>> GetList(FilterDefinition<Activity> filter)

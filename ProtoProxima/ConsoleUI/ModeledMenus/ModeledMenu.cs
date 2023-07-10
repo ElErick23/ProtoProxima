@@ -51,14 +51,7 @@ public abstract class ModeledMenu<T> : CustomMenu
             };
         });
     }
-
-    protected void AddCustomItem(string name, Func<ModeledMenu<T>, Action> getAction,
-        Action<MenuItem>? itemConfig = null)
-    {
-        Add(name, getAction(this));
-        itemConfig?.Invoke(Items[^1]);
-    }
-
+    
     private static List<PropertyInfo> GetProperties()
     {
         var type = typeof(T);

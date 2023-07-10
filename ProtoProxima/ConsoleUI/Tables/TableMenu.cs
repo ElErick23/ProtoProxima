@@ -1,8 +1,6 @@
 ﻿using MongoDB.Driver;
-using ProtoProxima.ConsoleUI.ModeledMenus;
 using ProtoProxima.ConsoleUI.Services;
 using ProtoProxima.Core.Services;
-using ProtoProxima.MongoDB.Services;
 
 namespace ProtoProxima.ConsoleUI.Tables;
 
@@ -31,7 +29,30 @@ public class TableMenu<T> : CustomMenu
             });
         }
 
-        Add("Back", Close);
+        //TODO: Add pagination
+        //TODO: Add search
+        //TODO: Add sorting
+        //TODO: Add filtering
+        //TODO: Set done just for activities
+        Add('S', "Set Done", m =>
+        {
+            var element = data[CurrentItem.Index];
+            element!.GetType().GetProperty("Done")!.SetValue(element, true);
+            core.Update(element).Wait();
+            m.CloseMenu();
+            new TableMenu<T>(core, menuService, args, level).SetParent(parent!).Show();
+        }, ConsoleColor.Cyan);
+        
+        Add('D', "Delete", m =>
+        {
+            var element = data[CurrentItem.Index];
+            if (!core.Delete(element).Result) return;
+            
+            CloseMenu();
+            menuService.NewTableMenu<T>(args, level).SetParent(parent!).Show();
+        }, ConsoleColor.Red);
+        
+        Add('B', "Back", m => m.CloseMenu());
 
         Configure(config =>
         {

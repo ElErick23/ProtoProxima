@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -96,6 +97,37 @@ public class ConsoleMenu : IEnumerable
   public void CloseMenu()
   {
     this.closeTrigger.SetOn();
+  }
+
+  /// <summary>
+  /// Adds a menu button into this instance.
+  /// </summary>
+  /// <param name="key">Char that activates the button.</param>
+  /// <param name="name">Name of menu button.</param>
+  /// <param name="action">Action to call when menu item is chosen.</param>
+  /// <param name="foregroundColor">Custom foreground color for the button.</param>
+  /// <param name="backgroundColor">Custom background color for the button.</param>
+  /// <returns>This instance with added menu button.</returns>
+  public ConsoleMenu Add(char key, string name, Action<ConsoleMenu> action, ConsoleColor? foregroundColor = null, ConsoleColor? backgroundColor = null)
+  {
+    if (name == null)
+    {
+      throw new ArgumentNullException(nameof(name));
+    }
+
+    if (action is null)
+    {
+      throw new ArgumentNullException(nameof(action));
+    }
+
+    this.menuItems.Add(key, name, (_) =>
+    {
+      action(this);
+      return Task.CompletedTask;
+    });
+    this.menuItems.Buttons[key].ItemForegroundColor = foregroundColor;
+    this.menuItems.Buttons[key].ItemBackgroundColor = backgroundColor;
+    return this;
   }
 
   /// <summary>

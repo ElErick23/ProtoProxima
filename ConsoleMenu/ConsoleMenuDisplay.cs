@@ -88,6 +88,8 @@ internal sealed class ConsoleMenuDisplay
           break;
         }
 
+        this.WriteLineWithButtons(this.menuItems.Buttons);
+
         if (this.config.EnableFilter)
         {
           this.console.Write(this.config.FilterPrompt + filter);
@@ -103,6 +105,11 @@ internal sealed class ConsoleMenuDisplay
         else if (key.Key == ConsoleKey.UpArrow)
         {
           this.menuItems.SelectPreviousVisibleItem(this.visibility);
+        }
+        else if (this.menuItems.CanSelectButton(key.KeyChar))
+        {
+          this.menuItems.SelectButton(key.KeyChar);
+          breakIteration = true;
         }
         else if (this.menuItems.CanSelect(key.KeyChar))
         {
@@ -140,21 +147,29 @@ internal sealed class ConsoleMenuDisplay
       this.console.WriteLine();
       this.console.ForegroundColor = currentForegroundColor;
       this.console.BackgroundColor = currentBackgroundColor;
-      var action = this.menuItems.CurrentItem.AsyncAction;
-      if (action == ConsoleMenu.Close)
+
+      try
       {
-        this.menuItems.UnsetSelectedIndex();
-        return;
-      }
-      else
-      {
-        await action(token).ConfigureAwait(false);
-        if (this.closeTrigger.IsOn())
+        var action = this.menuItems.CurrentButton?.AsyncAction ?? this.menuItems.CurrentItem.AsyncAction;
+        if (action == ConsoleMenu.Close)
         {
           this.menuItems.UnsetSelectedIndex();
-          this.closeTrigger.SetOff();
           return;
         }
+        else
+        {
+          await action(token).ConfigureAwait(false);
+          if (this.closeTrigger.IsOn())
+          {
+            this.menuItems.UnsetSelectedIndex();
+            this.closeTrigger.SetOff();
+            return;
+          }
+        }
+      }
+      catch (ArgumentOutOfRangeException ex)
+      {
+        this.console.WriteLine("No item selected");
       }
     }
   }
@@ -166,19 +181,33 @@ internal sealed class ConsoleMenuDisplay
       this.console.BackgroundColor = menuItem.SelectedItemBackgroundColor ?? this.config.SelectedItemBackgroundColor;
       this.console.ForegroundColor = menuItem.SelectedItemForegroundColor ?? this.config.SelectedItemForegroundColor;
       this.console.Write(this.config.Selector);
-      this.config.WriteItemAction(menuItem);
-      this.console.WriteLine();
     }
     else
     {
       this.console.BackgroundColor = menuItem.ItemBackgroundColor ?? this.config.ItemBackgroundColor;
       this.console.ForegroundColor = menuItem.ItemForegroundColor ?? this.config.ItemForegroundColor;
       this.console.Write(this.noSelectorLine);
-      this.config.WriteItemAction(menuItem);
-      this.console.WriteLine();
     }
 
+    this.config.WriteItemAction(menuItem);
+    this.console.WriteLine();
     this.console.BackgroundColor = this.config.ItemBackgroundColor;
     this.console.ForegroundColor = this.config.ItemForegroundColor;
+  }
+
+  private void WriteLineWithButtons(Dictionary<char, MenuItem> buttons)
+  {
+    foreach (var pair in buttons)
+    {
+      var item = pair.Value;
+      this.console.BackgroundColor = item.ItemBackgroundColor ?? this.config.ItemBackgroundColor;
+      this.console.ForegroundColor = item.ItemForegroundColor ?? this.config.ItemForegroundColor;
+      this.console.Write($"[{pair.Key}] {item.Name}");
+      this.console.BackgroundColor = this.config.ItemBackgroundColor;
+      this.console.ForegroundColor = this.config.ItemForegroundColor;
+      this.console.Write("   ");
+    }
+
+    this.console.WriteLine();
   }
 }

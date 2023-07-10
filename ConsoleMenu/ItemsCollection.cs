@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,10 +9,12 @@ namespace ConsoleTools;
 internal sealed class ItemsCollection
 {
   private readonly List<MenuItem> menuItems = new List<MenuItem>();
+  private readonly Dictionary<char, MenuItem> menuButtons = new Dictionary<char, MenuItem>();
   private readonly MenuConfig config = new MenuConfig();
   private int? selectedIndex;
   private string? selectedName;
   private int currentItemIndex;
+  private char? currentButtonKey;
 
   public ItemsCollection()
   {
@@ -24,15 +27,33 @@ internal sealed class ItemsCollection
 
   public List<MenuItem> Items => this.menuItems;
 
+  public Dictionary<char, MenuItem> Buttons => this.menuButtons;
+
   public MenuItem CurrentItem
   {
     get => this.menuItems[this.currentItemIndex];
     set => this.menuItems[this.currentItemIndex] = value;
   }
 
+  public MenuItem? CurrentButton
+  {
+    get
+    {
+      var menuButton = this.currentButtonKey != null ? this.menuButtons[this.currentButtonKey.Value] : null;
+      this.currentButtonKey = null;
+      return menuButton;
+    }
+  }
+
   public void Add(string name, Func<CancellationToken, Task> action)
   {
     this.menuItems.Add(new MenuItem(name, action, this.menuItems.Count));
+  }
+
+  public void Add(char key, string name, Func<CancellationToken, Task> action)
+  {
+    var item = new MenuItem(name, action, this.menuItems.Count);
+    this.menuButtons.Add(key, item);
   }
 
   public void ResetCurrentIndex()
@@ -81,9 +102,19 @@ internal sealed class ItemsCollection
     return ch >= '0' && (ch - '0') < this.menuItems.Count; // is in range 0.._menuItems.Count
   }
 
+  public bool CanSelectButton(char ch)
+  {
+    return this.menuButtons.Any(b => b.Key == ch);
+  }
+
   public void Select(char ch)
   {
     this.currentItemIndex = ch - '0';
+  }
+
+  public void SelectButton(char ch)
+  {
+    this.currentButtonKey = ch;
   }
 
   public void UnsetSelectedIndex()

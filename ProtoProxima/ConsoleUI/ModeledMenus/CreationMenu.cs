@@ -11,7 +11,7 @@ public class CreationMenu<T> : ModeledMenu<T>
         int level = 0
     ) : base(core, element, args, level)
     {
-        AddCustomItem("Save", menu => () =>
+        Add('S', "Save", menu =>
         {
             Console.WriteLine("Saving...");
             core.Save(Element).Wait();
@@ -19,29 +19,17 @@ public class CreationMenu<T> : ModeledMenu<T>
             Console.WriteLine("Saved! Press any key to continue...");
             Console.ReadKey();
             CloseMenu();
-        }, itemConfig =>
-        {
-            itemConfig.ItemForegroundColor = ConsoleColor.Green;
-            itemConfig.ItemBackgroundColor = ConsoleColor.Black;
-            itemConfig.SelectedItemForegroundColor = ConsoleColor.Black;
-            itemConfig.SelectedItemBackgroundColor = ConsoleColor.Green;
-        });
-        
-        AddCustomItem("Clear", menu => () =>
+        }, ConsoleColor.Green);
+
+        Add('C', "Clear", menu =>
         {
             Console.WriteLine("Clearing...");
             Element = Activator.CreateInstance<T>();
             CloseMenu();
             new CreationMenu<T>(core, element, args, level).Show();
-        }, itemConfig =>
-        {
-            itemConfig.ItemForegroundColor = ConsoleColor.DarkCyan;
-            itemConfig.ItemBackgroundColor = ConsoleColor.Black;
-            itemConfig.SelectedItemForegroundColor = ConsoleColor.Black;
-            itemConfig.SelectedItemBackgroundColor = ConsoleColor.DarkCyan;
         });
-
-        Add("Back", Close);
+        
+        Add('B', "Back", m => m.CloseMenu());
         
         Configure(config => config.Title = $"[Creating {typeof(T).Name}]");
     }

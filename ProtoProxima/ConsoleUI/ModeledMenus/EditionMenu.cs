@@ -10,41 +10,22 @@ public class EditionMenu<T> : ModeledMenu<T>
         int level = 0
     ) : base(core, element, args, level)
     {
-        AddCustomItem("Update", menu => () =>
+        Add('U',"Update", menu =>
         {
             Console.WriteLine("Updating...");
             core.Update(Element).Wait();
             Console.WriteLine("Updated! Press any key to continue...");
             Console.ReadKey();
             CloseMenu();
-        }, itemConfig =>
-        {
-            itemConfig.ItemForegroundColor = ConsoleColor.Magenta;
-            itemConfig.ItemBackgroundColor = ConsoleColor.Black;
-            itemConfig.SelectedItemForegroundColor = ConsoleColor.Black;
-            itemConfig.SelectedItemBackgroundColor = ConsoleColor.Magenta;
-        });
+        }, ConsoleColor.Magenta);
 
-        AddCustomItem("Delete", menu => () =>
+        Add('D', "Delete", menu =>
         {
-            Console.WriteLine("Are you sure? (y/n)");
-            var key = Console.ReadLine();
-            if (key != "y") return;
+            if (core.Delete(Element).Result)
+                CloseMenu();
+        }, ConsoleColor.Red);
 
-            Console.WriteLine("Deleting...");
-            core.Delete(Element).Wait();
-            Console.WriteLine("Deleted! Press any key to continue...");
-            Console.ReadKey();
-            CloseMenu();
-        }, itemConfig =>
-        {
-            itemConfig.ItemForegroundColor = ConsoleColor.Red;
-            itemConfig.ItemBackgroundColor = ConsoleColor.Black;
-            itemConfig.SelectedItemForegroundColor = ConsoleColor.Black;
-            itemConfig.SelectedItemBackgroundColor = ConsoleColor.Red;
-        });
-        
-        Add("Back", Close);
+        Add('B', "Back", m => m.CloseMenu());
         
         Configure(config => config.Title = $"[Editing {typeof(T).Name}]");
     }
