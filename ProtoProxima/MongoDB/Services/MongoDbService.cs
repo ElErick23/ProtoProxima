@@ -7,11 +7,11 @@ public abstract class MongoDbService<T>
 {
     private readonly IMongoCollection<T> _modelCollection;
 
-    public MongoDbService(IOptions<MongoDBSettings> mongoDbSettings)
+    public MongoDbService(IOptions<MongoDBSettings> mongoDbSettings, string collectionName)
     {
         var client = new MongoClient(mongoDbSettings.Value.ConnectionURI);
         var database = client.GetDatabase(mongoDbSettings.Value.DatabaseName);
-        _modelCollection = database.GetCollection<T>("Activities");
+        _modelCollection = database.GetCollection<T>(collectionName);
     }
 
     public async Task<T> GetAsync(string id)

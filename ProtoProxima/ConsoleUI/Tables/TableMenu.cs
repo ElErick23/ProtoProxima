@@ -6,6 +6,8 @@ namespace ProtoProxima.ConsoleUI.Tables;
 
 public class TableMenu<T> : CustomMenu
 {
+    public List<T> Data;
+    
     public TableMenu(
         ICore<T> core,
         MenuService menuService,
@@ -13,14 +15,14 @@ public class TableMenu<T> : CustomMenu
         int level = 0)
         : base(args, level)
     {
-        var data = core.GetList(Builders<T>.Filter.Empty).Result;
-        var table = new ModeledTable<T>().Populate(data);
+        Data = core.GetList(Builders<T>.Filter.Empty).Result;
+        var table = new ModeledTable<T>().Populate(Data);
         var (header, tableRows, footer) = table.GetTableParts();
 
-        for (var i = 0; i < data.Count; i++)
+        for (var i = 0; i < Data.Count; i++)
         {
             var row = tableRows[i];
-            var element = data[i];
+            var element = Data[i];
             Add(row, () =>
             {
                 menuService.NewEditionMenu(element, args, level + 1).SetParent(this).Show();
@@ -36,7 +38,7 @@ public class TableMenu<T> : CustomMenu
         //TODO: Set done just for activities
         Add('S', "Set Done", m =>
         {
-            var element = data[CurrentItem.Index];
+            var element = Data[CurrentItem.Index];
             element!.GetType().GetProperty("Done")!.SetValue(element, true);
             core.Update(element).Wait();
             m.CloseMenu();
@@ -45,7 +47,7 @@ public class TableMenu<T> : CustomMenu
         
         Add('D', "Delete", m =>
         {
-            var element = data[CurrentItem.Index];
+            var element = Data[CurrentItem.Index];
             if (!core.Delete(element).Result) return;
             
             CloseMenu();
@@ -59,7 +61,7 @@ public class TableMenu<T> : CustomMenu
             config.Title = $"[Select {typeof(T).Name}]";
             config.WriteHeaderAction = () =>
             {
-                if (data.Count > 0)
+                if (Data.Count > 0)
                 {
                     Console.WriteLine();
                     Console.Write(header);
@@ -69,8 +71,8 @@ public class TableMenu<T> : CustomMenu
             };
             config.WriteItemAction = item =>
             {
-                Console.Write(item.Index < data.Count ? $"[{item.Index}] {item.Name}" : $"{item.Name}");
-                if (item.Index != data.Count - 1) return;
+                Console.Write(item.Index < Data.Count ? $"[{item.Index}] {item.Name}" : $"{item.Name}");
+                if (item.Index != Data.Count - 1) return;
 
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.ForegroundColor = ConsoleColor.Gray;

@@ -13,6 +13,8 @@ var config = builder.Configuration.GetSection("MongoDB");
 builder.Services.Configure<MongoDBSettings>(config);
 builder.Services.AddSingleton<ActivityCore>();
 builder.Services.AddSingleton<ActivityService>();
+builder.Services.AddSingleton<CategoryCore>();
+builder.Services.AddSingleton<CategoryService>();
 builder.Services.AddSingleton<MenuService>();
 var menuService = builder.Services.BuildServiceProvider().GetRequiredService<MenuService>();
 

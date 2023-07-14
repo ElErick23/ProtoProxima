@@ -6,7 +6,7 @@ namespace ProtoProxima.MongoDB.Services;
 
 public class ActivityService : MongoDbService<Activity>
 {
-    public ActivityService(IOptions<MongoDBSettings> mongoDbSettings) : base(mongoDbSettings)
+    public ActivityService(IOptions<MongoDBSettings> mongoDbSettings) : base(mongoDbSettings, "Activities")
     {
     }
 

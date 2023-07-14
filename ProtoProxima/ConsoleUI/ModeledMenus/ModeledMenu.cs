@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
-using ConsoleTools;
 using MongoDB.Bson.Serialization.Attributes;
+using ProtoProxima.ConsoleUI.Services;
 using ProtoProxima.Core.Services;
 using ProtoProxima.MongoDB.Models;
 
@@ -10,10 +10,12 @@ public abstract class ModeledMenu<T> : CustomMenu
 {
     protected T Element;
     protected readonly ICore<T> Core;
+    private readonly MenuService _menuService;
     private readonly List<PropertyInfo> _props;
 
     protected ModeledMenu(
         ICore<T> core,
+        MenuService menuService,
         T? element,
         string[] args,
         int level = 0
@@ -21,19 +23,29 @@ public abstract class ModeledMenu<T> : CustomMenu
     {
         Element = element ?? Activator.CreateInstance<T>();
         Core = core;
+        _menuService = menuService;
         _props = GetProperties();
         _props.ForEach(prop => Add(prop.Name, () =>
         {
-            var propTypeName = prop.PropertyType.Name;
-            if (prop.PropertyType.IsGenericType &&
-                prop.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
-                propTypeName = prop.PropertyType.GetGenericArguments()[0].Name;
+            var propType = prop.PropertyType;
+            if (propType == typeof(Category))
+            {
+                var categoryMenu = menuService.NewTableMenu<Category>(args, level + 1)
+                    .SetParent(this);
+                categoryMenu.Show();
+            }
+            else
+            {
+                var propTypeName = propType.Name;
+                if (prop.PropertyType.IsGenericType &&
+                    prop.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                    propTypeName = prop.PropertyType.GetGenericArguments()[0].Name;
 
-            Console.WriteLine($"Set {prop.Name} ({propTypeName}):");
-            var value = Console.ReadLine();
-            if (string.IsNullOrEmpty(value)) return;
-
-            prop.SetValue(Element, ParseValue(value, prop.PropertyType));
+                Console.WriteLine($"Set {prop.Name} ({propTypeName}):");
+                var value = Console.ReadLine();
+                if (string.IsNullOrEmpty(value)) return;
+                prop.SetValue(Element, ParseValue(value, prop.PropertyType));
+            }
         }));
 
         Configure(config =>
@@ -43,7 +55,8 @@ public abstract class ModeledMenu<T> : CustomMenu
             {
                 var i = item.Index;
                 if (i < _props.Count)
-                    Console.Write("[{0}] {1}{2}", i, item.Name.PadRight(20), DisplayableValue(_props[i].GetValue(Element)));
+                    Console.Write("[{0}] {1}{2}", i, item.Name.PadRight(20),
+                        DisplayableValue(_props[i].GetValue(Element)));
                 if (i == _props.Count - 1)
                     Console.WriteLine();
                 if (i >= _props.Count)
@@ -51,7 +64,7 @@ public abstract class ModeledMenu<T> : CustomMenu
             };
         });
     }
-    
+
     private static List<PropertyInfo> GetProperties()
     {
         var type = typeof(T);
