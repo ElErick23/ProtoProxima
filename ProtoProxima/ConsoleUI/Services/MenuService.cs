@@ -1,4 +1,5 @@
-﻿using ProtoProxima.ConsoleUI.ModeledMenus;
+﻿using ConsoleTools;
+using ProtoProxima.ConsoleUI.ModeledMenus;
 using ProtoProxima.ConsoleUI.Tables;
 using ProtoProxima.Core.Services;
 using ProtoProxima.MongoDB.Models;
@@ -28,7 +29,12 @@ public class MenuService
         int level = 0
     ) => new(GetCore<T>(), this, element, args, level);
 
-    public TableMenu<T> NewTableMenu<T>(
+    public DefaultTableMenu<T> NewDefaultTableMenu<T>(
+        string[] args,
+        int level = 0
+    ) => new(GetCore<T>(), this, args, level);
+    
+    public EditionTableMenu<T> NewEditionTableMenu<T>(
         string[] args,
         int level = 0
     ) => new(GetCore<T>(), this, args, level);

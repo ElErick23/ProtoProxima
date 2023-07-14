@@ -23,7 +23,7 @@ var menu = new CustomMenu(args, level: 0)
     .Add("View activities", parent =>
     {
         Console.WriteLine("Loading activities...");
-        menuService.NewTableMenu<Activity>(args, 1).SetParent(parent).Show();
+        menuService.NewEditionTableMenu<Activity>(args, 1).SetParent(parent).Show();
     })
     .Add("Exit", () => Environment.Exit(0))
     .Configure(menuConfig =>

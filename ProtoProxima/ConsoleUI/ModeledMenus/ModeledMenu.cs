@@ -30,9 +30,12 @@ public abstract class ModeledMenu<T> : CustomMenu
             var propType = prop.PropertyType;
             if (propType == typeof(Category))
             {
-                var categoryMenu = menuService.NewTableMenu<Category>(args, level + 1)
-                    .SetParent(this);
-                categoryMenu.Show();
+                var categoryMenu = menuService.NewDefaultTableMenu<Category>(args, level + 1);
+                categoryMenu.SetParent(this)
+                    .Show();
+                var category = categoryMenu.GetSelectedElement();
+                if (category == null) return;
+                prop.SetValue(Element, category);
             }
             else
             {
