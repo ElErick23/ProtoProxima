@@ -16,8 +16,8 @@ namespace ConsoleTools;
 public class ConsoleMenu : IEnumerable
 {
   internal IConsole Console = new SystemConsole();
-  private readonly ItemsCollection menuItems;
   private readonly CloseTrigger closeTrigger;
+  private ItemsCollection menuItems;
   private MenuConfig config = new MenuConfig();
   protected ConsoleMenu? parent = null;
 
@@ -90,6 +90,22 @@ public class ConsoleMenu : IEnumerable
   /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
   /// <exception cref="InvalidOperationException">Thrown if this method is called directly.</exception>
   public static Task Close(CancellationToken cancellationToken) => throw new InvalidOperationException("Don't run this method directly. Just pass a reference to this method.");
+
+  /// <summary>
+  /// Clears the menu items.
+  /// </summary>
+  public void ClearItems()
+  {
+    this.menuItems.Items.Clear();
+  }
+
+  /// <summary>
+  /// Sets the selected item.
+  /// </summary>
+  public void SetSelectedItem(int index)
+  {
+    this.menuItems.SetSelectedItem(index);
+  }
 
   /// <summary>
   /// Close the menu before or after a menu action was triggered.

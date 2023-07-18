@@ -5,7 +5,7 @@ namespace ProtoProxima.ConsoleUI;
 public class CustomMenu : ConsoleMenu
 {
 
-    public CustomMenu(string[] args, int level = 0) : base(args, level)
+    public CustomMenu()
     {
         Configure(config =>
         {

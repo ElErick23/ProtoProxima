@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using ProtoProxima.MongoDB.Models;
 using ProtoProxima.MongoDB.Services;
 
@@ -27,6 +26,13 @@ public class ActivityCore : ICore<Activity>
         await _activityService.UpdateAsync(element.Id, element);
     }
 
+    public async Task UpdateCategory(Category category)
+    {
+        var filter = Builders<Activity>.Filter.Where(a => a.Category.Id == category.Id);
+        var update = Builders<Activity>.Update.Set(a => a.Category, category);
+        await _activityService.UpdateManyAsync(filter, update);
+    }
+
     public async Task<bool> Delete(Activity element)
     {
         if (element.Id == null)
@@ -46,25 +52,5 @@ public class ActivityCore : ICore<Activity>
     public async Task<List<Activity>> GetList(FilterDefinition<Activity> filter)
     {
         return await _activityService.GetListAsync(filter);
-    }
-
-    public string? GetProperty(PropertyInfo propertyInfo)
-    {
-        if (propertyInfo.PropertyType == typeof(Category))
-        {
-            Console.WriteLine("nO .|.");
-            return null;
-        }
-        else
-        {
-            var propTypeName = propertyInfo.PropertyType.Name;
-            if (propertyInfo.PropertyType.IsGenericType &&
-                propertyInfo.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
-                propTypeName = propertyInfo.PropertyType.GetGenericArguments()[0].Name;
-
-            Console.WriteLine($"Set {propertyInfo.Name} ({propTypeName}):");
-            var value = Console.ReadLine();
-            return string.IsNullOrEmpty(value) ? null : value;
-        }
     }
 }

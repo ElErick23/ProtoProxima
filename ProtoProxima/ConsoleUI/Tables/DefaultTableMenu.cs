@@ -8,11 +8,11 @@ public class DefaultTableMenu<T> : TableMenu<T>
 {
     private int _selectedElementIndex = -1;
     
-    public DefaultTableMenu(ICore<T> core, MenuService menuService, string[] args, int level = 0) : base(core, menuService, args, level)
+    public DefaultTableMenu(ICore<T> core, MenuService menuService) : base(core, menuService)
     {
     }
 
-    protected override Action<ConsoleMenu> GetAction(T element, string[] args)
+    protected override Action<ConsoleMenu> GetAction(T element)
     {
         return menu =>
         {
@@ -21,7 +21,7 @@ public class DefaultTableMenu<T> : TableMenu<T>
         };
     }
 
-    protected override void AddButtons(string[] args)
+    protected override void AddButtons()
     {
     }
     

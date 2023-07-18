@@ -6,6 +6,7 @@ ConsoleTools.ConsoleMenu.Add(string! name, System.Func<ConsoleTools.ConsoleMenu!
 ConsoleTools.ConsoleMenu.Add(string! name, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task!>! action) -> ConsoleTools.ConsoleMenu!
 ConsoleTools.ConsoleMenu.AddRange(System.Collections.Generic.IEnumerable<System.Tuple<string!, System.Action!>!>! menuItems) -> ConsoleTools.ConsoleMenu!
 ConsoleTools.ConsoleMenu.AddRange(System.Collections.Generic.IEnumerable<System.Tuple<string!, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task!>!>!>! menuItems) -> ConsoleTools.ConsoleMenu!
+ConsoleTools.ConsoleMenu.ClearItems() -> void
 ConsoleTools.ConsoleMenu.CloseMenu() -> void
 ConsoleTools.ConsoleMenu.Configure(ConsoleTools.MenuConfig! config) -> ConsoleTools.ConsoleMenu!
 ConsoleTools.ConsoleMenu.Configure(System.Action<ConsoleTools.MenuConfig!>! configure) -> ConsoleTools.ConsoleMenu!
@@ -15,7 +16,7 @@ ConsoleTools.ConsoleMenu.CurrentItem.get -> ConsoleTools.MenuItem!
 ConsoleTools.ConsoleMenu.CurrentItem.set -> void
 ConsoleTools.ConsoleMenu.GetEnumerator() -> System.Collections.IEnumerator!
 ConsoleTools.ConsoleMenu.Items.get -> System.Collections.Generic.IReadOnlyList<ConsoleTools.MenuItem!>!
-ConsoleTools.ConsoleMenu.parent -> ConsoleTools.ConsoleMenu?
+ConsoleTools.ConsoleMenu.SetSelectedItem(int index) -> void
 ConsoleTools.ConsoleMenu.Show() -> void
 ConsoleTools.MenuConfig
 ConsoleTools.MenuConfig.ArgsPreselectedItemsKey -> string!

@@ -6,34 +6,28 @@ namespace ProtoProxima.ConsoleUI.Tables;
 
 public class EditionTableMenu<T> : TableMenu<T>
 {
-    public EditionTableMenu(
-        ICore<T> core, 
-        MenuService menuService, 
-        string[] args, 
-        int level = 0
-        ) : base(core, menuService, args, level)
+    public EditionTableMenu(ICore<T> core, MenuService menuService) : base(core, menuService)
     {
     }
     
-    protected override Action<ConsoleMenu> GetAction(T element, string[] args)
+    protected override Action<ConsoleMenu> GetAction(T element)
     {
         return menu =>
         {
-            MenuService.NewEditionMenu(element, args).SetParent(this).Show();
+            MenuService.NewEditionMenu(element).SetParent(this).Show();
             CloseMenu();
-            new EditionTableMenu<T>(Core, MenuService, args).SetParent(parent!).Show();
+            new EditionTableMenu<T>(Core, MenuService).SetParent(parent!).Show();
         };
     }
 
-    protected override void AddButtons(string[] args)
+    protected override void AddButtons()
     {
         Add('S', "Set Done", m =>
         {
             var element = GetCurrentElement();
             element!.GetType().GetProperty("Done")!.SetValue(element, true);
             Core.Update(element).Wait();
-            m.CloseMenu();
-            new EditionTableMenu<T>(Core, MenuService, args).SetParent(parent!).Show();
+            RefreshItems();
         }, ConsoleColor.Cyan);
         
         Add('D', "Delete", m =>
@@ -41,8 +35,7 @@ public class EditionTableMenu<T> : TableMenu<T>
             var element = GetCurrentElement();
             if (!Core.Delete(element).Result) return;
             
-            CloseMenu();
-            MenuService.NewEditionTableMenu<T>(args).SetParent(parent!).Show();
+            RefreshItems();
         }, ConsoleColor.Red);
     }
 }

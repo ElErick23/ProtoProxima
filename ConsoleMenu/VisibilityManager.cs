@@ -5,12 +5,17 @@ namespace ConsoleTools;
 
 internal sealed class VisibilityManager
 {
-  private readonly bool[] visibility;
+  private bool[] visibility;
 
   public VisibilityManager(int size)
   {
-    bool[] visibility = new bool[size];
-    for (int i = 0; i < visibility.Length; i++)
+    this.SetVisibility(size);
+  }
+
+  public void SetVisibility(int size)
+  {
+    var visibility = new bool[size];
+    for (var i = 0; i < visibility.Length; i++)
     {
       visibility[i] = true; // true means visible
     }

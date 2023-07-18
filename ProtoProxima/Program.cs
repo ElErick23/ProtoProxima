@@ -18,12 +18,17 @@ builder.Services.AddSingleton<CategoryService>();
 builder.Services.AddSingleton<MenuService>();
 var menuService = builder.Services.BuildServiceProvider().GetRequiredService<MenuService>();
 
-var menu = new CustomMenu(args, level: 0)
-    .Add("Create activity", menuService.NewCreationMenu<Activity>(null, args, 1).Show)
+var menu = new CustomMenu()
+    .Add("Create activity", menuService.NewCreationMenu<Activity>(null).Show)
     .Add("View activities", parent =>
     {
         Console.WriteLine("Loading activities...");
-        menuService.NewEditionTableMenu<Activity>(args, 1).SetParent(parent).Show();
+        menuService.NewEditionTableMenu<Activity>().SetParent(parent).Show();
+    })
+    .Add("View categories", parent =>
+    {
+        Console.WriteLine("Loading categories...");
+        menuService.NewEditionTableMenu<Category>().SetParent(parent).Show();
     })
     .Add("Exit", () => Environment.Exit(0))
     .Configure(menuConfig =>

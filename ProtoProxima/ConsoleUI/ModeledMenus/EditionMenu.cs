@@ -4,13 +4,7 @@ namespace ProtoProxima.ConsoleUI.ModeledMenus;
 
 public class EditionMenu<T> : ModeledMenu<T>
 {
-    public EditionMenu(
-        ICore<T> core,
-        MenuService menuService,
-        T? element,
-        string[] args,
-        int level = 0
-    ) : base(core, menuService, element, args, level)
+    public EditionMenu(ICore<T> core, MenuService menuService, T? element) : base(core, menuService, element)
     {
         Add('U',"Update", menu =>
         {

@@ -36,6 +36,11 @@ public abstract class MongoDbService<T>
         await _modelCollection.ReplaceOneAsync(filter, model);
     }
 
+    public async Task UpdateManyAsync(FilterDefinition<T> filter, UpdateDefinition<T> update)
+    {
+        await _modelCollection.UpdateManyAsync(filter, update);
+    }
+
     public async Task DeleteAsync(string id)
     {
         var filter = Builders<T>.Filter.Eq("Id", id);

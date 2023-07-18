@@ -9,35 +9,27 @@ public abstract class TableMenu<T> : CustomMenu
 {
     protected readonly ICore<T> Core;
     protected readonly MenuService MenuService;
-    protected readonly List<T> Data;
+    protected List<T> Data;
+    private ModeledTable<T> _table;
     
-    protected TableMenu(
-        ICore<T> core,
-        MenuService menuService,
-        string[] args,
-        int level = 0)
-        : base(args, level)
+    protected TableMenu(ICore<T> core, MenuService menuService)
     {
         Core = core;
         MenuService = menuService;
-        Data = core.GetList(Builders<T>.Filter.Empty).Result;
-        
-        var table = new ModeledTable<T>().Populate(Data);
-        var (header, tableRows, footer) = table.GetTableParts();
-        
-        for (var i = 0; i < Data.Count; i++)
-        {
-            var row = tableRows[i];
-            var element = Data[i];
-            Add(row, GetAction(element, args));
-        }
+        CreateItems();
 
         //TODO: Add pagination
         //TODO: Add search
         //TODO: Add sorting
         //TODO: Add filtering
         //TODO: Set done just for activities
-        AddButtons(args);
+        Add('C', "Create", m =>
+        {
+            MenuService.NewCreationMenu<T>(default).SetParent(this).Show();
+            RefreshItems();
+        });
+
+        AddButtons();
 
         Add('B', "Back", m => m.CloseMenu());
 
@@ -49,7 +41,7 @@ public abstract class TableMenu<T> : CustomMenu
                 if (Data.Count > 0)
                 {
                     Console.WriteLine();
-                    Console.Write(header);
+                    Console.Write(_table.Header);
                 }
                 else
                     Console.WriteLine("No items found.");
@@ -61,16 +53,34 @@ public abstract class TableMenu<T> : CustomMenu
 
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.ForegroundColor = ConsoleColor.Gray;
-                Console.Write(footer);
+                Console.Write(_table.Footer);
             };
         });
     }
 
-    protected abstract Action<ConsoleMenu> GetAction(T element, string[] args);
+    private void CreateItems()
+    {
+        Data = Core.GetList(Builders<T>.Filter.Empty).Result;
+        _table = new ModeledTable<T>(Data);
+        for (var i = 0; i < Data.Count; i++)
+        {
+            var row = _table.Options[i];
+            var element = Data[i];
+            Add(row, GetAction(element));
+        }
+    }
 
-    protected abstract void AddButtons(string[] args);
+    protected void RefreshItems()
+    {
+        ClearItems();
+        CreateItems();
+    }
 
-    public T GetCurrentElement()
+    protected abstract Action<ConsoleMenu> GetAction(T element);
+
+    protected abstract void AddButtons();
+
+    protected T GetCurrentElement()
     {
         return Data[CurrentItem.Index];
     }

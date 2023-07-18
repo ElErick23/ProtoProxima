@@ -1,6 +1,4 @@
-﻿
-using System.Reflection;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 
 namespace ProtoProxima.Core.Services;
 

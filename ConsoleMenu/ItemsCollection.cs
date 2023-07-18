@@ -27,6 +27,11 @@ internal sealed class ItemsCollection
 
   public List<MenuItem> Items => this.menuItems;
 
+  public void ClearItems()
+  {
+    this.menuItems.Clear();
+  }
+
   public Dictionary<char, MenuItem> Buttons => this.menuButtons;
 
   public MenuItem CurrentItem
@@ -59,6 +64,11 @@ internal sealed class ItemsCollection
   public void ResetCurrentIndex()
   {
     this.selectedIndex = 0;
+  }
+
+  public void SetSelectedItem(int index)
+  {
+    this.selectedIndex = index;
   }
 
   public void SetSelectedItems(string[] args, int level)

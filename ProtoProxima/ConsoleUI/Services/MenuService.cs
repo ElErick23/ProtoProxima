@@ -17,27 +17,13 @@ public class MenuService
         _categoryCore = categoryCore;
     }
 
-    public CreationMenu<T> NewCreationMenu<T>(
-        T? element,
-        string[] args,
-        int level = 0
-    ) => new(GetCore<T>(), this, element, args, level);
+    public CreationMenu<T> NewCreationMenu<T>(T? element) => new(GetCore<T>(), this, element);
 
-    public EditionMenu<T> NewEditionMenu<T>(
-        T? element,
-        string[] args,
-        int level = 0
-    ) => new(GetCore<T>(), this, element, args, level);
+    public EditionMenu<T> NewEditionMenu<T>(T? element) => new(GetCore<T>(), this, element);
 
-    public DefaultTableMenu<T> NewDefaultTableMenu<T>(
-        string[] args,
-        int level = 0
-    ) => new(GetCore<T>(), this, args, level);
+    public DefaultTableMenu<T> NewDefaultTableMenu<T>() => new(GetCore<T>(), this);
     
-    public EditionTableMenu<T> NewEditionTableMenu<T>(
-        string[] args,
-        int level = 0
-    ) => new(GetCore<T>(), this, args, level);
+    public EditionTableMenu<T> NewEditionTableMenu<T>() => new(GetCore<T>(), this);
 
     private ICore<T> GetCore<T>()
     {

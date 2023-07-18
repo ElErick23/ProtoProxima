@@ -13,13 +13,7 @@ public abstract class ModeledMenu<T> : CustomMenu
     private readonly MenuService _menuService;
     private readonly List<PropertyInfo> _props;
 
-    protected ModeledMenu(
-        ICore<T> core,
-        MenuService menuService,
-        T? element,
-        string[] args,
-        int level = 0
-    ) : base(args, level)
+    protected ModeledMenu(ICore<T> core, MenuService menuService, T? element)
     {
         Element = element ?? Activator.CreateInstance<T>();
         Core = core;
@@ -30,7 +24,7 @@ public abstract class ModeledMenu<T> : CustomMenu
             var propType = prop.PropertyType;
             if (propType == typeof(Category))
             {
-                var categoryMenu = menuService.NewDefaultTableMenu<Category>(args, level + 1);
+                var categoryMenu = menuService.NewDefaultTableMenu<Category>();
                 categoryMenu.SetParent(this)
                     .Show();
                 var category = categoryMenu.GetSelectedElement();

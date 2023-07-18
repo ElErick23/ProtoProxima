@@ -6,25 +6,20 @@ namespace ProtoProxima.ConsoleUI.Tables;
 
 public class ModeledTable<T> : Table
 {
-    public ModeledTable() : base(TableConfig.Unicode(), GetPropertyNames())
-    {
-    }
-
-    public ModeledTable<T> Populate(List<T> data)
+    private readonly string[] _rowStrings;
+    
+    public ModeledTable(List<T> data) : base(TableConfig.Unicode(), GetPropertyNames())
     {
         foreach (var element in data)
             AddRow(GetPropertyValues(element));
-        return this;
+        _rowStrings = ToString().Split("\n");
     }
 
-    public (string, string[], string) GetTableParts()
-    {
-        var rowStrings = ToString().Split("\n");
-        var header = "".PadRight(8) + rowStrings[0] + "".PadRight(8) + rowStrings[1] + "\n".PadRight(9) + rowStrings[2]; 
-        var options = rowStrings[3..^2];
-        var footer = "\n".PadRight(9) + rowStrings[^2];
-        return (header, options, footer);
-    }
+    public string Header => $"{"",-8}{_rowStrings[0]}{"",-8}{_rowStrings[1]}{"\n",-9}{_rowStrings[2]}";
+
+    public string[] Options => _rowStrings[3..^2];
+    
+    public string Footer => $"{"\n",-9}{_rowStrings[^2]}";
 
     private static string[] GetPropertyNames()
     {
@@ -42,7 +37,7 @@ public class ModeledTable<T> : Table
             select DisplayableValue(prop.GetValue(instance))).ToArray();
     }
     
-    public static string DisplayableValue(object? value)
+    private static string DisplayableValue(object? value)
     {
         if (value == null)
             return "---";

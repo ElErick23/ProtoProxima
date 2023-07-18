@@ -51,6 +51,7 @@ internal sealed class ConsoleMenuDisplay
     while (true)
     {
       token.ThrowIfCancellationRequested();
+      this.visibility.SetVisibility(this.menuItems.Items.Count);
       do
       {
         if (this.config.ClearConsole)

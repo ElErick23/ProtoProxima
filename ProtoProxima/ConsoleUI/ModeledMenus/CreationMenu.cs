@@ -5,13 +5,7 @@ namespace ProtoProxima.ConsoleUI.ModeledMenus;
 
 public class CreationMenu<T> : ModeledMenu<T>
 {
-    public CreationMenu(
-        ICore<T> core,
-        MenuService menuService,
-        T? element,
-        string[] args,
-        int level = 0
-    ) : base(core, menuService, element, args, level)
+    public CreationMenu(ICore<T> core, MenuService menuService, T? element) : base(core, menuService, element)
     {
         Add('S', "Save", menu =>
         {
@@ -28,7 +22,7 @@ public class CreationMenu<T> : ModeledMenu<T>
             Console.WriteLine("Clearing...");
             Element = Activator.CreateInstance<T>();
             CloseMenu();
-            new CreationMenu<T>(core, menuService, element, args, level)
+            new CreationMenu<T>(core, menuService, element)
                 .SetParent(parent!)
                 .Show();
         });
