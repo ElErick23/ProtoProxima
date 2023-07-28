@@ -124,7 +124,7 @@ public class ConsoleMenu : IEnumerable
   /// <param name="foregroundColor">Custom foreground color for the button.</param>
   /// <param name="backgroundColor">Custom background color for the button.</param>
   /// <returns>This instance with added menu button.</returns>
-  public ConsoleMenu Add(char key, string name, Action<ConsoleMenu> action, ConsoleColor? foregroundColor = null, ConsoleColor? backgroundColor = null)
+  public ConsoleMenu Add(char key, string name, Action action, ConsoleColor? foregroundColor = null, ConsoleColor? backgroundColor = null)
   {
     if (name == null)
     {
@@ -138,7 +138,7 @@ public class ConsoleMenu : IEnumerable
 
     this.menuItems.Add(key, name, (_) =>
     {
-      action(this);
+      action();
       return Task.CompletedTask;
     });
     this.menuItems.Buttons[key].ItemForegroundColor = foregroundColor;
@@ -253,11 +253,31 @@ public class ConsoleMenu : IEnumerable
   }
 
   /// <summary>
+  /// Adds range of menu buttons into this instance.
+  /// </summary>
+  /// <param name="menuButtons">Menu buttons to add.</param>
+  /// <returns>This instance with added menu buttons.</returns>
+  public ConsoleMenu AddRange(IEnumerable<ButtonBody> menuButtons)
+  {
+    if (menuButtons is null)
+    {
+      throw new ArgumentNullException(nameof(menuButtons));
+    }
+
+    foreach (var button in menuButtons)
+    {
+      this.Add(button.Key, button.Name, button.Action, button.ForegroundColor, button.BackgroundColor);
+    }
+
+    return this;
+  }
+
+  /// <summary>
   /// Adds range of menu actions into this instance.
   /// </summary>
   /// <param name="menuItems">Menu items to add.</param>
   /// <returns>This instance with added menu items.</returns>
-  public ConsoleMenu AddRange(IEnumerable<Tuple<string, Action>> menuItems)
+  public ConsoleMenu AddRange(IEnumerable<ItemBody> menuItems)
   {
     if (menuItems is null)
     {
@@ -266,7 +286,7 @@ public class ConsoleMenu : IEnumerable
 
     foreach (var item in menuItems)
     {
-      this.Add(item.Item1, item.Item2);
+      this.Add(item.Name, item.Action);
     }
 
     return this;
@@ -358,4 +378,19 @@ public class ConsoleMenu : IEnumerable
   /// </summary>
   /// <returns>An enumeration of the current menu items.</returns>
   public IEnumerator GetEnumerator() => this.Items.GetEnumerator();
+}
+
+public struct ItemBody
+{
+  public string Name;
+  public Action Action;
+}
+
+public struct ButtonBody
+{
+  public char Key;
+  public string Name;
+  public Action Action;
+  public ConsoleColor? ForegroundColor;
+  public ConsoleColor? BackgroundColor;
 }

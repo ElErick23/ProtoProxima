@@ -17,13 +17,27 @@ public class MenuService
         _categoryCore = categoryCore;
     }
 
-    public CreationMenu<T> NewCreationMenu<T>(T? element) => new(GetCore<T>(), this, element);
+    public CreationMenu<T> NewCreationMenu<T>(T? element)
+    {
+        return CastMenu(new CreationMenu<T>(GetCore<T>(), this, element));
+    }
 
-    public EditionMenu<T> NewEditionMenu<T>(T? element) => new(GetCore<T>(), this, element);
+    public EditionMenu<T> NewEditionMenu<T>(T? element)
+    {
+        return CastMenu(new EditionMenu<T>(GetCore<T>(), this, element));
+    }
 
-    public DefaultTableMenu<T> NewDefaultTableMenu<T>() => new(GetCore<T>(), this);
-    
-    public EditionTableMenu<T> NewEditionTableMenu<T>() => new(GetCore<T>(), this);
+    public SelectionTableMenu<T> NewDefaultTableMenu<T>()
+    {
+        return CastMenu(new SelectionTableMenu<T>(GetCore<T>(), this));
+    }
+
+    public EditionTableMenu<T> NewEditionTableMenu<T>()
+    {
+        return CastMenu(new EditionTableMenu<T>(GetCore<T>(), this));
+    }
+
+    private static T CastMenu<T>(T menu) where T : CustomMenu => (T)menu.SetUp();
 
     private ICore<T> GetCore<T>()
     {

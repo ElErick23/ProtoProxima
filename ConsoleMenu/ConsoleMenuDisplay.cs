@@ -203,7 +203,8 @@ internal sealed class ConsoleMenuDisplay
       var item = pair.Value;
       this.console.BackgroundColor = item.ItemBackgroundColor ?? this.config.ItemBackgroundColor;
       this.console.ForegroundColor = item.ItemForegroundColor ?? this.config.ItemForegroundColor;
-      this.console.Write($"[{pair.Key}] {item.Name}");
+      var key = pair.Key == (char) ConsoleKey.Backspace ? "<" : pair.Key.ToString();
+      this.console.Write($"[{key}] {item.Name}");
       this.console.BackgroundColor = this.config.ItemBackgroundColor;
       this.console.ForegroundColor = this.config.ItemForegroundColor;
       this.console.Write("   ");

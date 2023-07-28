@@ -1,10 +1,16 @@
-﻿ConsoleTools.ConsoleMenu
-ConsoleTools.ConsoleMenu.Add(char key, string! name, System.Action<ConsoleTools.ConsoleMenu!>! action, System.ConsoleColor? foregroundColor = null, System.ConsoleColor? backgroundColor = null) -> ConsoleTools.ConsoleMenu!
+﻿ConsoleTools.ButtonBody
+ConsoleTools.ButtonBody.Action -> System.Action!
+ConsoleTools.ButtonBody.ButtonBody() -> void
+ConsoleTools.ButtonBody.Key -> char
+ConsoleTools.ButtonBody.Name -> string!
+ConsoleTools.ConsoleMenu
+ConsoleTools.ConsoleMenu.Add(char key, string! name, System.Action! action, System.ConsoleColor? foregroundColor = null, System.ConsoleColor? backgroundColor = null) -> ConsoleTools.ConsoleMenu!
 ConsoleTools.ConsoleMenu.Add(string! name, System.Action! action) -> ConsoleTools.ConsoleMenu!
 ConsoleTools.ConsoleMenu.Add(string! name, System.Action<ConsoleTools.ConsoleMenu!>! action) -> ConsoleTools.ConsoleMenu!
 ConsoleTools.ConsoleMenu.Add(string! name, System.Func<ConsoleTools.ConsoleMenu!, System.Threading.CancellationToken, System.Threading.Tasks.Task!>! action) -> ConsoleTools.ConsoleMenu!
 ConsoleTools.ConsoleMenu.Add(string! name, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task!>! action) -> ConsoleTools.ConsoleMenu!
-ConsoleTools.ConsoleMenu.AddRange(System.Collections.Generic.IEnumerable<System.Tuple<string!, System.Action!>!>! menuItems) -> ConsoleTools.ConsoleMenu!
+ConsoleTools.ConsoleMenu.AddRange(System.Collections.Generic.IEnumerable<ConsoleTools.ButtonBody>! menuButtons) -> ConsoleTools.ConsoleMenu!
+ConsoleTools.ConsoleMenu.AddRange(System.Collections.Generic.IEnumerable<ConsoleTools.ItemBody>! menuItems) -> ConsoleTools.ConsoleMenu!
 ConsoleTools.ConsoleMenu.AddRange(System.Collections.Generic.IEnumerable<System.Tuple<string!, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task!>!>!>! menuItems) -> ConsoleTools.ConsoleMenu!
 ConsoleTools.ConsoleMenu.ClearItems() -> void
 ConsoleTools.ConsoleMenu.CloseMenu() -> void
@@ -18,6 +24,10 @@ ConsoleTools.ConsoleMenu.GetEnumerator() -> System.Collections.IEnumerator!
 ConsoleTools.ConsoleMenu.Items.get -> System.Collections.Generic.IReadOnlyList<ConsoleTools.MenuItem!>!
 ConsoleTools.ConsoleMenu.SetSelectedItem(int index) -> void
 ConsoleTools.ConsoleMenu.Show() -> void
+ConsoleTools.ItemBody
+ConsoleTools.ItemBody.Action -> System.Action!
+ConsoleTools.ItemBody.ItemBody() -> void
+ConsoleTools.ItemBody.Name -> string!
 ConsoleTools.MenuConfig
 ConsoleTools.MenuConfig.ArgsPreselectedItemsKey -> string!
 ConsoleTools.MenuConfig.ArgsPreselectedItemsValueSeparator -> char

@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using ConsoleTools;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ProtoProxima.ConsoleUI;
 using ProtoProxima.ConsoleUI.Services;
 using ProtoProxima.Core.Services;
 using ProtoProxima.MongoDB;
@@ -18,7 +18,7 @@ builder.Services.AddSingleton<CategoryService>();
 builder.Services.AddSingleton<MenuService>();
 var menuService = builder.Services.BuildServiceProvider().GetRequiredService<MenuService>();
 
-var menu = new CustomMenu()
+var menu = new ConsoleMenu()
     .Add("Create activity", menuService.NewCreationMenu<Activity>(null).Show)
     .Add("View activities", parent =>
     {
@@ -34,6 +34,8 @@ var menu = new CustomMenu()
     .Configure(menuConfig =>
     {
         menuConfig.Title = "[Main menu]";
+        menuConfig.Selector = "--> ";
         menuConfig.WriteHeaderAction = Console.WriteLine;
+        menuConfig.EnableBreadcrumb = true;
     });
 menu.Show();
